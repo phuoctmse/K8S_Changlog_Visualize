@@ -1,0 +1,11 @@
+{
+  "categories": [
+    { "id": "networking", "label": "Networking", "icon": "network", "color": "blue" },
+    { "id": "security", "label": "Security / RBAC", "icon": "shield-lock", "color": "pink" },
+    { "id": "storage", "label": "Storage", "icon": "database", "color": "teal" },
+    { "id": "scheduling", "label": "Scheduling", "icon": "calendar", "color": "purple" },
+    { "id": "container-runtime", "label": "Container runtime", "icon": "box", "color": "coral" },
+    { "id": "observability", "label": "Observability", "icon": "chart-bar", "color": "amber" },
+    { "id": "api-extensibility", "label": "API / Extensibility", "icon": "puzzle", "color": "green" }
+  ]
+}

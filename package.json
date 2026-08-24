@@ -1,0 +1,16 @@
+{
+  "name": "k8s-changelog-viz",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "fetch": "node scripts/fetch-changelog.mjs",
+    "parse": "node scripts/parse-changelog.mjs",
+    "summarize": "node scripts/summarize-changelog.mjs",
+    "journeys": "node scripts/group-feature-journeys.mjs",
+    "backfill": "node scripts/run-backfill.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
