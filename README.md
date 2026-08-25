@@ -45,6 +45,19 @@ node scripts/group-feature-journeys.mjs
 `run-backfill.mjs` resumable — chạy lại y hệt lệnh cũ nếu bị dừng giữa chừng,
 nó tự skip version/bước đã có file output trên disk.
 
+## Chạy frontend
+
+```bash
+cd web
+npm install
+npm run dev   # http://localhost:3000
+```
+
+Frontend đọc trực tiếp `../data/versions/*.json`, `../data/feature-journeys/*.json`,
+`../data/taxonomy.json` từ filesystem (server component) — không cần build lại
+khi backfill sinh thêm data, chỉ cần refresh trang. Nếu `data/versions/` chưa
+có gì (chưa chạy pipeline), cả 3 trang hiện empty state thay vì lỗi.
+
 ## Cấu trúc
 
 ```
@@ -57,5 +70,6 @@ data/
   parsed/{version}.json    output bước parse
   versions/{version}.json  output bước summarize — schema chính, dùng cho frontend
   feature-journeys/{id}.json output bước group-feature-journeys
+web/               frontend Next.js (App Router, TypeScript, Tailwind) — package.json riêng
 docs/proposal.md  kiến trúc, schema, quyết định đã chốt
 ```

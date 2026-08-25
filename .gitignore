@@ -1,3 +1,8 @@
 node_modules/
 .env
 data/raw/
+
+# Throwaway fixtures for local frontend dev only (see web/README section on
+# testing without a real backfill) — never real pipeline output, never commit.
+data/versions/dev-sample*.json
+data/feature-journeys/dev-sample*.json

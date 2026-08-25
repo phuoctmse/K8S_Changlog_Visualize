@@ -166,17 +166,45 @@ Không tự động publish thẳng data mới chạy pipeline. Trước khi pub
 3. Không có cam kết 0% sai sót — pipeline dùng LLM, luôn cần review thủ công
    trước khi lên production.
 
-## 6. Frontend / UI — TBD
+## 6. Frontend / UI
 
-Chưa có quyết định chi tiết nào được chốt cho phần frontend. Theo CLAUDE.md,
-scope Phase 1 gồm 3 view:
+Stack: Next.js (App Router, TypeScript, Tailwind CSS v4), app riêng ở `web/`
+(package.json/node_modules tách khỏi package.json của pipeline scripts ở
+root — tránh lẫn dependency của 2 việc khác nhau). Chạy `npm run dev` trong
+`web/` (xem `web/README.md` do `create-next-app` sinh ra cho lệnh chi tiết).
 
-- **Overview map**: có toggle Concept view / Changes view (chi tiết UI/UX
-  chưa thiết kế).
-- **Timeline mode**: duyệt theo version, filter theo category
-  (`data/taxonomy.json`).
-- **Feature Journey**: hiển thị `data/feature-journeys/{id}.json` dạng
-  narrative xuyên version.
+Đọc data trực tiếp từ filesystem ở server component (`web/src/lib/data.ts`,
+đường dẫn `<repo-root>/data` — 1 cấp trên `web/`), không qua API route
+riêng. Không cache/build-time static generation cho data — mỗi request đọc
+lại JSON, chấp nhận trade-off này ở quy mô dữ liệu hiện tại (vài trăm change,
+33 version).
 
-Stack, routing, component structure, v.v. chưa được quyết định — cần thảo
-luận và chốt trước khi implement, rồi cập nhật lại mục này.
+Đã implement 3 route khớp schema ở mục 4:
+
+- **`/` — Overview map**: toggle Changes view / Concept view.
+  - Changes view: sidebar category (từ `taxonomy.json`, kèm số lượng change),
+    click để filter; grid `ChangeCard` bên phải.
+  - Concept view: **chưa implement** — hiện chỉ hiện empty state, vì cần nội
+    dung grounded vào K8s official docs (chưa có nguồn dữ liệu cho việc này,
+    xem checklist ở CLAUDE.md).
+- **`/timeline` — Timeline mode**: danh sách version (sort giảm dần theo
+  major.minor số, không phải string sort), toggle multi-select category để
+  filter, mỗi version hiển thị các `ChangeCard` còn lại sau filter.
+- **`/journeys` và `/journeys/[id]` — Feature Journey**: danh sách journey
+  dạng card; trang chi tiết hiển thị milestone theo thứ tự version tăng dần,
+  mỗi milestone có `StageBadge` (problem/alpha/solution/ga/deprecated) và
+  link ra `source_url` của change gốc (tra theo `change_id` trong toàn bộ
+  `data/versions/*.json`).
+
+Tất cả 3 route đều xử lý trạng thái rỗng (chưa chạy backfill) bằng
+`EmptyState` — đã verify bằng browser thật (Playwright) cả 2 trường hợp có
+data mẫu và không có data.
+
+Category color trong `taxonomy.json` (`blue`, `pink`, `teal`, `purple`,
+`coral`, `amber`, `green`) được map cứng sang class Tailwind trong
+`web/src/lib/colors.ts` — Tailwind v4 scan class theo literal string trong
+source nên KHÔNG được build class động kiểu `` `bg-${color}-500` ``; nếu
+`taxonomy.json` thêm color mới, phải thêm entry tương ứng vào file này.
+
+Còn TBD, chưa quyết định: Concept view (nội dung + UI), pipeline tự động
+(GitHub Actions), deploy target.

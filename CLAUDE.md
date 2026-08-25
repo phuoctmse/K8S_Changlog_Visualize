@@ -29,7 +29,12 @@ k8s-changelog-viz/
 │   ├── parsed/{version}.json # output bước 2
 │   ├── versions/{version}.json # output bước 3 (schema chính, dùng cho frontend)
 │   └── feature-journeys/{id}.json # output bước 4
-├── package.json
+├── web/                       # frontend Next.js — đọc trực tiếp từ ../data (xem docs/proposal.md mục 6)
+│   └── src/
+│       ├── app/               # route: / (Overview), /timeline, /journeys, /journeys/[id]
+│       ├── components/
+│       └── lib/                # data.ts (đọc fs), types.ts (khớp schema), colors.ts (taxonomy color -> Tailwind class)
+├── package.json               # pipeline scripts — KHÔNG chung package.json với web/
 └── .env                       # KHÔNG commit — chứa OLLAMA_API_KEY (hoặc ANTHROPIC_API_KEY)
 ```
 
@@ -113,8 +118,8 @@ chốt trong proposal về việc không đảm bảo 0% sai sót.
 - [x] Prompt summarize/categorize — thiết kế xong, CHƯA chạy live
 - [x] Script group Feature Journey — thiết kế xong, CHƯA chạy live
 - [x] Script orchestrator backfill — chưa chạy
-- [ ] Backfill thật 33+ version (v1.0 → v1.36)
-- [ ] Concept view (grounded vào K8s official docs)
-- [ ] Frontend: Overview map, Timeline mode, Feature Journey view
+- [ ] Backfill thật 33+ version (v1.0 → v1.36) — đang chờ OLLAMA_API_KEY (hoặc ANTHROPIC_API_KEY)
+- [x] Frontend: Overview map (Changes view), Timeline mode, Feature Journey view — `web/`, đã verify bằng browser với data mẫu + empty state, CHƯA có data thật để verify với data thật
+- [ ] Concept view (grounded vào K8s official docs) — chỉ có empty state, chưa có nội dung/thiết kế
 - [ ] Pipeline tự động (GitHub Actions) cho version mới
 - [ ] Learn mode (Phase 2, chưa bắt đầu)
