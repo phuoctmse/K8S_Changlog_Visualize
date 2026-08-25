@@ -1,25 +1,28 @@
 #!/usr/bin/env node
 /**
  * Stage 4 of the pipeline: read ALL data/versions/{version}.json files
- * (output of stage 3 / summarize-changelog.mjs), ask the Claude API to
- * identify changes that belong to the same underlying feature across
- * multiple versions, and write data/feature-journeys/{id}.json per the
- * committed schema (id, title, category, description, milestones[]).
+ * (output of stage 3 / summarize-changelog.mjs), ask an LLM (via
+ * scripts/llm-client.mjs) to identify changes that belong to the same
+ * underlying feature across multiple versions, and write
+ * data/feature-journeys/{id}.json per the committed schema (id, title,
+ * category, description, milestones[]).
  *
  * Also back-fills feature_journey_id into the source version files so
  * Timeline mode can link a single change to its full journey.
  *
- * Why Claude API instead of keyword matching: feature names drift across
+ * Why an LLM instead of keyword matching: feature names drift across
  * versions ("Ingress" -> "Gateway API", "PodSecurityPolicy" -> "Pod
  * Security Standards") so naive string matching on title/summary misses
  * the connections that make Feature Journey worth building at all.
  * Keyword overlap is used only as a pre-filter to keep each API call's
  * candidate set small, not as the final grouping decision.
  *
- * Usage: ANTHROPIC_API_KEY=... node group-feature-journeys.mjs
+ * Usage: OLLAMA_API_KEY=... node group-feature-journeys.mjs
+ *        ANTHROPIC_API_KEY=... node group-feature-journeys.mjs   (fallback provider)
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { callLLM } from './llm-client.mjs';
 
 const VERSIONS_DIR = path.resolve('data/versions');
 const JOURNEYS_DIR = path.resolve('data/feature-journeys');
@@ -68,7 +71,7 @@ async function loadAllChanges() {
 }
 
 /**
- * Cheap pre-filter so each Claude API call only sees a plausible candidate
+ * Cheap pre-filter so each LLM call only sees a plausible candidate
  * set instead of every change ever recorded. Groups by category first
  * (a journey never spans categories), then relies on the model itself to
  * decide which same-category changes actually belong to one journey.
@@ -82,33 +85,9 @@ function groupByCategory(changes) {
   return byCategory;
 }
 
-async function callClaude(candidates) {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set');
-
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 4096,
-      system: SYSTEM_PROMPT,
-      messages: [
-        {
-          role: 'user',
-          content: `Danh sách change trong cùng 1 category (JSON array, ${candidates.length} phần tử):\n${JSON.stringify(candidates, null, 2)}`,
-        },
-      ],
-    }),
-  });
-  if (!res.ok) throw new Error(`Claude API error: ${res.status} ${await res.text()}`);
-  const data = await res.json();
-  const text = data.content.map((b) => (b.type === 'text' ? b.text : '')).join('');
-  return JSON.parse(text.replace(/^```json\s*|```\s*$/g, '').trim());
+async function callLLMForCategory(candidates) {
+  const userMessage = `Danh sách change trong cùng 1 category (JSON array, ${candidates.length} phần tử):\n${JSON.stringify(candidates, null, 2)}`;
+  return callLLM(SYSTEM_PROMPT, userMessage);
 }
 
 function validateJourney(journey, validChangeIds) {
@@ -139,7 +118,7 @@ export async function groupFeatureJourneys() {
   for (const [category, candidates] of byCategory) {
     if (candidates.length < 2) continue; // can't form a journey from 1 change
     console.log(`Category "${category}": ${candidates.length} candidate changes...`);
-    const journeys = await callClaude(candidates);
+    const journeys = await callLLMForCategory(candidates);
     for (const j of journeys) {
       if (validateJourney(j, validChangeIds)) allJourneys.push(j);
     }

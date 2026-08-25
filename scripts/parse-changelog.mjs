@@ -3,10 +3,10 @@
  * Parse a raw CHANGELOG-x.y.md into structured "raw" JSON — one entry per
  * bullet point, grouped by section (Deprecation, API Change, Feature, ...).
  *
- * This is the PRE-Claude-API stage: no summarization, no categorization,
+ * This is the PRE-LLM stage: no summarization, no categorization,
  * no why_it_matters — just faithful extraction of what's actually in the
- * official changelog. The next pipeline stage (summarize-changelog.mjs,
- * not built yet) will take this raw JSON and call the Claude API to
+ * official changelog. The next pipeline stage (summarize-changelog.mjs)
+ * takes this raw JSON and calls an LLM (via llm-client.mjs) to
  * produce the final /data/versions/{version}.json described in the
  * project schema (category, summary, why_it_matters, breaking_change,
  * is_milestone, feature_journey_id).

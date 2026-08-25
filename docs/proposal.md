@@ -23,12 +23,25 @@ Không làm Learn mode ở phase này.
 ```
 fetch-changelog.mjs        (1) tải CHANGELOG-x.y.md raw từ kubernetes/kubernetes
       ↓
-parse-changelog.mjs        (2) parse thô thành entries theo section, KHÔNG gọi Claude API
+parse-changelog.mjs        (2) parse thô thành entries theo section, KHÔNG gọi LLM API
       ↓
-summarize-changelog.mjs    (3) Claude API — category / summary / why_it_matters / breaking_change / is_milestone
+summarize-changelog.mjs    (3) LLM API — category / summary / why_it_matters / breaking_change / is_milestone
       ↓
-group-feature-journeys.mjs (4) Claude API — nối các change cùng 1 mạch tiến hoá xuyên version
+group-feature-journeys.mjs (4) LLM API — nối các change cùng 1 mạch tiến hoá xuyên version
 ```
+
+Bước 3 và 4 gọi qua `scripts/llm-client.mjs` — provider được chọn bằng biến môi
+trường, không hard-code trong từng script:
+
+- `OLLAMA_API_KEY` set → Ollama Cloud (`https://ollama.com/api/chat`), model
+  mặc định `gpt-oss:120b` (đổi qua `OLLAMA_MODEL`).
+- Không có `OLLAMA_API_KEY` nhưng có `ANTHROPIC_API_KEY` → fallback sang Claude
+  API (`claude-sonnet-4-6`).
+
+Model open-weight (qua Ollama) có độ chính xác JSON/structured-output và chất
+lượng tiếng Việt kém ổn định hơn Claude — luôn test 1 version bằng tay
+(mục "Lệnh chạy cơ bản" trong README) và đọc kỹ `data/versions/{version}.json`
+trước khi tin tưởng chạy `run-backfill.mjs` cho cả 33+ version.
 
 `run-backfill.mjs` là orchestrator chạy (1)→(2)→(3) tuần tự cho tất cả version
 (v1.0 → v1.36), sau đó chạy (4) một lần. Resumable: mỗi bước skip nếu file
@@ -60,7 +73,7 @@ cha, không tách riêng. Trailing marker `([#PR](url), [@author](url)) [SIG ...
 
 Output: `data/parsed/{version}.json`, KHÔNG chứa category/summary — thuần parse.
 
-### 2.3. Bước 3 — summarize (Claude API)
+### 2.3. Bước 3 — summarize (LLM API)
 
 Gom entries thành batch (15 entry/batch) để tiết kiệm số lượng API call. Với
 mỗi entry, model chỉ được dùng thông tin có sẵn trong `raw_text` /
@@ -72,7 +85,7 @@ Output: `data/versions/{version}.json` — schema ở mục 4.1.
 
 `feature_journey_id` để `null` ở bước này — được bước 4 back-fill sau.
 
-### 2.4. Bước 4 — group feature journeys (Claude API)
+### 2.4. Bước 4 — group feature journeys (LLM API)
 
 Đọc toàn bộ `data/versions/*.json`, pre-filter theo category (một journey
 không bao giờ nhảy category), rồi hỏi Claude trong từng category: những change

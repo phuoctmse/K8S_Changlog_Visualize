@@ -4,11 +4,11 @@
  * version from v1.0 to the latest (currently v1.36, April 2026), then
  * runs the cross-version Feature Journey grouping once at the end.
  *
- * Per version: fetch -> parse -> summarize (Claude API)
- * Once, after all versions: group-feature-journeys (Claude API)
+ * Per version: fetch -> parse -> summarize (LLM API)
+ * Once, after all versions: group-feature-journeys (LLM API)
  *
  * Design choices:
- * - Sequential, not parallel: keeps Claude API usage predictable and
+ * - Sequential, not parallel: keeps LLM API usage predictable and
  *   avoids rate-limit storms across 33+ versions.
  * - Resumable: skips a version's step if its output file already exists,
  *   so a failed run (rate limit, network blip) can just be re-invoked.
@@ -16,9 +16,10 @@
  *   surfaces immediately instead of silently burning through the batch.
  *
  * Usage:
- *   ANTHROPIC_API_KEY=... node run-backfill.mjs
- *   ANTHROPIC_API_KEY=... node run-backfill.mjs --from 1.20 --to 1.25   (partial range)
- *   ANTHROPIC_API_KEY=... node run-backfill.mjs --skip-journeys         (versions only)
+ *   OLLAMA_API_KEY=... node run-backfill.mjs
+ *   OLLAMA_API_KEY=... node run-backfill.mjs --from 1.20 --to 1.25   (partial range)
+ *   OLLAMA_API_KEY=... node run-backfill.mjs --skip-journeys         (versions only)
+ *   (or ANTHROPIC_API_KEY=... as fallback provider — see scripts/llm-client.mjs)
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -98,7 +99,7 @@ async function processVersion(version, stats) {
   }
 
   // 3. summarize (skip if final version file already exists — this is the
-  // expensive Claude API stage, so resumability matters most here)
+  // expensive LLM API stage, so resumability matters most here)
   const versionOutPath = path.join(VERSIONS_DIR, `${version}.json`);
   if (await fileExists(versionOutPath)) {
     console.log(`  [skip] summarize (already have ${versionOutPath})`);

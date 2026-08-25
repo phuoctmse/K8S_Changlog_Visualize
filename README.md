@@ -8,8 +8,12 @@ Timeline mode, và Feature Journey. Xem [`docs/proposal.md`](docs/proposal.md)
 
 ```bash
 npm install
-echo "ANTHROPIC_API_KEY=sk-ant-..." > .env
+echo "OLLAMA_API_KEY=..." > .env
+echo "OLLAMA_MODEL=gpt-oss:120b" >> .env   # optional, đây là default
 ```
+
+(Có thể dùng `ANTHROPIC_API_KEY=sk-ant-...` thay cho `OLLAMA_API_KEY` —
+xem `scripts/llm-client.mjs` để biết cách chọn provider.)
 
 Script không tự đọc `.env` — export trước khi chạy:
 
@@ -25,6 +29,7 @@ node scripts/fetch-changelog.mjs 1.29
 node scripts/parse-changelog.mjs 1.29
 node scripts/summarize-changelog.mjs 1.29
 # -> kiểm tra data/versions/1.29.json bằng tay trước khi backfill hàng loạt
+# (model open-weight qua Ollama JSON/tiếng Việt kém ổn định hơn Claude — review kỹ)
 
 # Backfill toàn bộ v1.0 -> v1.36 + group feature journeys
 node scripts/run-backfill.mjs
@@ -43,7 +48,9 @@ nó tự skip version/bước đã có file output trên disk.
 ## Cấu trúc
 
 ```
-scripts/    pipeline: fetch -> parse -> summarize -> group-feature-journeys -> run-backfill
+scripts/
+  llm-client.mjs  provider client dùng chung (Ollama Cloud mặc định, Claude API fallback)
+  pipeline: fetch -> parse -> summarize -> group-feature-journeys -> run-backfill
 data/
   taxonomy.json           category cố định
   raw/{version}.md         (gitignored) output bước fetch

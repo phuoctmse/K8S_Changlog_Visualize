@@ -1,17 +1,19 @@
 #!/usr/bin/env node
 /**
  * Stage 3 of the pipeline: take data/parsed/{version}.json (raw, unlabeled
- * changelog entries) and call the Claude API to produce
+ * changelog entries) and call an LLM (via scripts/llm-client.mjs) to produce
  * data/versions/{version}.json matching the project's committed schema:
  * category, summary, why_it_matters, breaking_change, is_milestone.
  *
  * feature_journey_id is intentionally left null here — that's pass 2
  * (a separate script, cross-version linking) and out of scope for this file.
  *
- * Usage: ANTHROPIC_API_KEY=... node summarize-changelog.mjs 1.29
+ * Usage: OLLAMA_API_KEY=... node summarize-changelog.mjs 1.29
+ *        ANTHROPIC_API_KEY=... node summarize-changelog.mjs 1.29   (fallback provider)
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { callLLM } from './llm-client.mjs';
 
 const PARSED_DIR = path.resolve('data/parsed');
 const OUT_DIR = path.resolve('data/versions');
@@ -68,31 +70,8 @@ function chunk(arr, size) {
   return out;
 }
 
-async function callClaude(batch, categories) {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set');
-
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 4096,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: 'user', content: buildUserMessage(batch, categories) }],
-    }),
-  });
-  if (!res.ok) {
-    throw new Error(`Claude API error: ${res.status} ${await res.text()}`);
-  }
-  const data = await res.json();
-  const text = data.content.map((b) => (b.type === 'text' ? b.text : '')).join('');
-  const cleaned = text.replace(/^```json\s*|```\s*$/g, '').trim();
-  return JSON.parse(cleaned);
+async function callLLMForBatch(batch, categories) {
+  return callLLM(SYSTEM_PROMPT, buildUserMessage(batch, categories));
 }
 
 const CATEGORY_IDS_CACHE = { value: null };
@@ -136,7 +115,7 @@ export async function summarizeChangelog(version) {
 
   for (const [i, batch] of batches.entries()) {
     console.log(`Batch ${i + 1}/${batches.length} (${batch.length} entries)...`);
-    const results = await callClaude(batch, taxonomy.categories);
+    const results = await callLLMForBatch(batch, taxonomy.categories);
     if (results.length !== batch.length) {
       console.warn(`  [warn] batch returned ${results.length} results for ${batch.length} entries — skipping mismatched batch`);
       continue;
@@ -168,7 +147,7 @@ const isMain = import.meta.url === `file://${process.argv[1]}`;
 if (isMain) {
   const version = process.argv[2];
   if (!version) {
-    console.error('Usage: ANTHROPIC_API_KEY=... node summarize-changelog.mjs <minor-version>');
+    console.error('Usage: OLLAMA_API_KEY=... node summarize-changelog.mjs <minor-version>');
     process.exit(1);
   }
   summarizeChangelog(version).catch((err) => {
