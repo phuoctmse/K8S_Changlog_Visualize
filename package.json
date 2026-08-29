@@ -8,9 +8,13 @@
     "parse": "node scripts/parse-changelog.mjs",
     "summarize": "node scripts/summarize-changelog.mjs",
     "journeys": "node scripts/group-feature-journeys.mjs",
-    "backfill": "node scripts/run-backfill.mjs"
+    "backfill": "node scripts/run-backfill.mjs",
+    "test": "node --test scripts/"
   },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^7.4.2"
   }
 }
