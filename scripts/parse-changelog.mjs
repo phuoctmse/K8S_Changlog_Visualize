@@ -15,6 +15,7 @@
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const RAW_DIR = path.resolve('data/raw');
 const OUT_DIR = path.resolve('data/parsed');
@@ -177,7 +178,7 @@ export async function parseChangelog(minorVersion) {
 }
 
 // CLI entry
-const isMain = import.meta.url === `file://${process.argv[1]}`;
+const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
   const version = process.argv[2];
   if (!version) {

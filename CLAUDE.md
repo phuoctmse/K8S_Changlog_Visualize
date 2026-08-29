@@ -18,8 +18,10 @@ k8s-changelog-viz/
 ├── scripts/
 │   ├── fetch-changelog.mjs       # bước 1: tải CHANGELOG-x.y.md từ GitHub
 │   ├── parse-changelog.mjs       # bước 2: parse thô, chưa gọi Claude API
-│   ├── summarize-changelog.mjs   # bước 3: Claude API — category/summary/why_it_matters
-│   ├── group-feature-journeys.mjs # bước 4: Claude API — nối change qua nhiều version
+│   ├── summarize-changelog.mjs   # bước 3: LLM API — category/summary/why_it_matters
+│   ├── group-feature-journeys.mjs # bước 4: LLM API — nối change qua nhiều version
+│   ├── llm-client.mjs            # LLM provider abstraction — Anthropic Claude hoặc Ollama Cloud, chọn qua LLM_PROVIDER
+│   ├── llm-client.test.mjs       # unit test cho llm-client.mjs
 │   └── run-backfill.mjs          # orchestrator: chạy tuần tự cả 33+ version
 ├── data/
 │   ├── taxonomy.json         # category cố định — SỬA Ở ĐÂY nếu cần thêm category
@@ -28,20 +30,27 @@ k8s-changelog-viz/
 │   ├── versions/{version}.json # output bước 3 (schema chính, dùng cho frontend)
 │   └── feature-journeys/{id}.json # output bước 4
 ├── package.json
-└── .env                       # KHÔNG commit — chứa ANTHROPIC_API_KEY
+├── .env.example                # mẫu — copy thành .env rồi điền key
+└── .env                       # KHÔNG commit — chứa ANTHROPIC_API_KEY và/hoặc OLLAMA_*
 ```
 
 ## Setup lần đầu
 ```bash
 cd k8s-changelog-viz
 npm init -y   # nếu package.json chưa có, đã kèm sẵn ở đây rồi thì bỏ qua
-echo "ANTHROPIC_API_KEY=sk-ant-..." > .env
+cp .env.example .env   # điền ANTHROPIC_API_KEY (mặc định) hoặc LLM_PROVIDER=ollama + OLLAMA_API_KEY
 echo ".env" >> .gitignore
 echo "data/raw/" >> .gitignore   # raw markdown to, không cần commit
 ```
 
-Các script đọc `ANTHROPIC_API_KEY` từ biến môi trường, không đọc `.env` tự động —
-export trước khi chạy hoặc dùng `dotenv-cli`:
+`.env.example` đã liệt kê sẵn `LLM_PROVIDER`, `ANTHROPIC_API_KEY`, `OLLAMA_API_KEY`,
+`OLLAMA_MODEL`, `OLLAMA_BASE_URL` — copy làm điểm bắt đầu thay vì gõ tay từng biến.
+
+Các script đọc `ANTHROPIC_API_KEY` (khi dùng Claude) hoặc `OLLAMA_API_KEY` /
+`OLLAMA_MODEL` / `OLLAMA_BASE_URL` (khi dùng Ollama Cloud) từ biến môi trường,
+không đọc `.env` tự động — export trước khi chạy hoặc dùng `dotenv-cli`. Biến
+`LLM_PROVIDER` (mặc định `anthropic`, có thể đặt `ollama`) chọn provider nào
+được dùng — xem `scripts/llm-client.mjs`:
 ```bash
 npm install -D dotenv-cli
 # rồi chạy: npx dotenv -- node scripts/run-backfill.mjs
@@ -55,6 +64,11 @@ ANTHROPIC_API_KEY=sk-ant-... node scripts/fetch-changelog.mjs 1.29
 node scripts/parse-changelog.mjs 1.29
 ANTHROPIC_API_KEY=sk-ant-... node scripts/summarize-changelog.mjs 1.29
 # -> kiểm tra data/versions/1.29.json bằng tay trước khi tin tưởng chạy hàng loạt
+
+# Tương tự nhưng dùng Ollama Cloud thay vì Claude (LLM_PROVIDER=ollama)
+node scripts/fetch-changelog.mjs 1.29
+node scripts/parse-changelog.mjs 1.29
+LLM_PROVIDER=ollama OLLAMA_API_KEY=... node scripts/summarize-changelog.mjs 1.29
 
 # Backfill toàn bộ 33+ version (v1.0 -> v1.36) + group feature journeys
 ANTHROPIC_API_KEY=sk-ant-... node scripts/run-backfill.mjs

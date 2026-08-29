@@ -5,6 +5,7 @@
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const RAW_BASE = 'https://raw.githubusercontent.com/kubernetes/kubernetes/master/CHANGELOG';
 const RAW_DIR = path.resolve('data/raw');
@@ -24,7 +25,7 @@ export async function fetchChangelog(minorVersion) {
 }
 
 // CLI entry
-const isMain = import.meta.url === `file://${process.argv[1]}`;
+const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
   const version = process.argv[2];
   if (!version) {

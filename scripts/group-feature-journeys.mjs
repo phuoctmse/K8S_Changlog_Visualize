@@ -20,6 +20,7 @@
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { callLLMJSON, currentProviderLabel } from './llm-client.mjs';
 
 const VERSIONS_DIR = path.resolve('data/versions');
@@ -152,7 +153,7 @@ export async function groupFeatureJourneys() {
 }
 
 // CLI entry
-const isMain = import.meta.url === `file://${process.argv[1]}`;
+const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
   groupFeatureJourneys().catch((err) => {
     console.error(err.message);
