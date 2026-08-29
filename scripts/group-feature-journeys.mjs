@@ -20,6 +20,7 @@
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { callLLMJSON, currentProviderLabel } from './llm-client.mjs';
 
 const VERSIONS_DIR = path.resolve('data/versions');
 const JOURNEYS_DIR = path.resolve('data/feature-journeys');
@@ -82,35 +83,6 @@ function groupByCategory(changes) {
   return byCategory;
 }
 
-async function callClaude(candidates) {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set');
-
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 4096,
-      system: SYSTEM_PROMPT,
-      messages: [
-        {
-          role: 'user',
-          content: `Danh sách change trong cùng 1 category (JSON array, ${candidates.length} phần tử):\n${JSON.stringify(candidates, null, 2)}`,
-        },
-      ],
-    }),
-  });
-  if (!res.ok) throw new Error(`Claude API error: ${res.status} ${await res.text()}`);
-  const data = await res.json();
-  const text = data.content.map((b) => (b.type === 'text' ? b.text : '')).join('');
-  return JSON.parse(text.replace(/^```json\s*|```\s*$/g, '').trim());
-}
-
 function validateJourney(journey, validChangeIds) {
   const errors = [];
   if (!journey.id) errors.push('missing id');
@@ -138,8 +110,11 @@ export async function groupFeatureJourneys() {
   const allJourneys = [];
   for (const [category, candidates] of byCategory) {
     if (candidates.length < 2) continue; // can't form a journey from 1 change
-    console.log(`Category "${category}": ${candidates.length} candidate changes...`);
-    const journeys = await callClaude(candidates);
+    console.log(`Category "${category}": ${candidates.length} candidate changes... [${currentProviderLabel()}]`);
+    const journeys = await callLLMJSON({
+      system: SYSTEM_PROMPT,
+      user: `Danh sách change trong cùng 1 category (JSON array, ${candidates.length} phần tử):\n${JSON.stringify(candidates, null, 2)}`,
+    });
     for (const j of journeys) {
       if (validateJourney(j, validChangeIds)) allJourneys.push(j);
     }

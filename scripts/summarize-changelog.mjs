@@ -12,6 +12,7 @@
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { callLLMJSON, currentProviderLabel } from './llm-client.mjs';
 
 const PARSED_DIR = path.resolve('data/parsed');
 const OUT_DIR = path.resolve('data/versions');
@@ -68,33 +69,6 @@ function chunk(arr, size) {
   return out;
 }
 
-async function callClaude(batch, categories) {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set');
-
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 4096,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: 'user', content: buildUserMessage(batch, categories) }],
-    }),
-  });
-  if (!res.ok) {
-    throw new Error(`Claude API error: ${res.status} ${await res.text()}`);
-  }
-  const data = await res.json();
-  const text = data.content.map((b) => (b.type === 'text' ? b.text : '')).join('');
-  const cleaned = text.replace(/^```json\s*|```\s*$/g, '').trim();
-  return JSON.parse(cleaned);
-}
-
 const CATEGORY_IDS_CACHE = { value: null };
 
 function validateEntry(entry, categoryIds, sourceEntry, version) {
@@ -135,8 +109,11 @@ export async function summarizeChangelog(version) {
   const seenIds = new Set();
 
   for (const [i, batch] of batches.entries()) {
-    console.log(`Batch ${i + 1}/${batches.length} (${batch.length} entries)...`);
-    const results = await callClaude(batch, taxonomy.categories);
+    console.log(`Batch ${i + 1}/${batches.length} (${batch.length} entries)... [${currentProviderLabel()}]`);
+    const results = await callLLMJSON({
+      system: SYSTEM_PROMPT,
+      user: buildUserMessage(batch, taxonomy.categories),
+    });
     if (results.length !== batch.length) {
       console.warn(`  [warn] batch returned ${results.length} results for ${batch.length} entries — skipping mismatched batch`);
       continue;
