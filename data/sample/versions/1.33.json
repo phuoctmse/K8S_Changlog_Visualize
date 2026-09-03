@@ -1,0 +1,66 @@
+{
+  "version": "1.33",
+  "release_date": "2025-04-23",
+  "changes": [
+    {
+      "id": "sidecar-containers-ga",
+      "title": "Sidecar container đạt GA",
+      "category": "container-runtime",
+      "summary": "Init container có restartPolicy: Always chính thức lên GA, khép lại vòng đời sidecar do kubelet quản lý.",
+      "why_it_matters": "Mẫu sidecar đã được dùng rộng rãi từ lâu qua các cách lách; GA nghĩa là nó cuối cùng đã trở thành một khái niệm chính thức của Kubernetes.",
+      "breaking_change": false,
+      "is_milestone": true,
+      "feature_journey_id": "sidecar-containers",
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.33.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "user-namespaces-beta",
+      "title": "User namespace cho pod lên beta",
+      "category": "security",
+      "summary": "Pod có thể chạy trong user namespace riêng, ánh xạ root bên trong container sang một UID không đặc quyền trên host.",
+      "why_it_matters": "Nhiều lỗ hổng leo thang đặc quyền của container mất hiệu lực khi root trong container vốn dĩ không phải root của host.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.33.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "inplace-pod-resize-beta",
+      "title": "Thay đổi tài nguyên pod tại chỗ lên beta",
+      "category": "scheduling",
+      "summary": "CPU và memory của một container đang chạy có thể được điều chỉnh mà không cần tạo lại pod.",
+      "why_it_matters": "Trước đó mọi lần chỉnh sai số resource đều đồng nghĩa với một lần restart — với workload có state, cái giá đó là thật.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.33.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "dra-structured-params-beta",
+      "title": "Dynamic Resource Allocation với tham số có cấu trúc lên beta",
+      "category": "scheduling",
+      "summary": "DRA cho phép pod yêu cầu thiết bị như GPU thông qua một API có schema rõ ràng, để scheduler tự hiểu và xếp lịch được.",
+      "why_it_matters": "Cách cấp phát GPU bằng device plugin cũ quá thô để mô tả nhu cầu chia sẻ hay phân mảnh thiết bị mà workload AI cần.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.33.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "endpoints-api-deprecated",
+      "title": "API Endpoints bị deprecated",
+      "category": "networking",
+      "summary": "Object Endpoints cũ chính thức bị đánh dấu deprecated; EndpointSlice là API được khuyến nghị cho mọi trường hợp.",
+      "why_it_matters": "Khép lại hành trình bắt đầu từ 1.16 — công cụ nào còn đọc Endpoints trực tiếp nay cần chuyển sang EndpointSlice.",
+      "breaking_change": true,
+      "is_milestone": false,
+      "feature_journey_id": "endpoints-to-endpointslice",
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.33.md",
+      "reviewed_by_human": false
+    }
+  ]
+}

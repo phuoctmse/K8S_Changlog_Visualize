@@ -1,0 +1,66 @@
+{
+  "version": "1.31",
+  "release_date": "2024-08-13",
+  "changes": [
+    {
+      "id": "nftables-proxy-beta",
+      "title": "Chế độ nftables của kube-proxy lên beta",
+      "category": "networking",
+      "summary": "Backend nftables đạt beta, đủ ổn định để chạy thử ở cluster thật bằng cách đặt proxy-mode=nftables.",
+      "why_it_matters": "Đây là bước để cluster quy mô lớn thoát khỏi giới hạn của iptables mà không phải thay hẳn sang CNI khác.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": "kube-proxy-iptables-to-nftables",
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.31.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "apparmor-ga",
+      "title": "Hỗ trợ AppArmor đạt GA",
+      "category": "security",
+      "summary": "Profile AppArmor chuyển từ annotation sang trường chính thức trong securityContext của Pod và Container.",
+      "why_it_matters": "Giống câu chuyện của seccomp trước đó: đưa policy bảo mật thành field có schema giúp nó được validate thay vì thất bại âm thầm.",
+      "breaking_change": false,
+      "is_milestone": true,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.31.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "pv-last-phase-transition-ga",
+      "title": "Trường lastPhaseTransitionTime của PersistentVolume đạt GA",
+      "category": "storage",
+      "summary": "Mỗi PersistentVolume ghi lại thời điểm gần nhất nó đổi phase (Pending, Bound, Released, Failed).",
+      "why_it_matters": "Không có mốc thời gian này thì rất khó tìm ra các volume Released bị bỏ quên đang âm thầm phát sinh chi phí lưu trữ.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.31.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "in-tree-cloud-providers-removed",
+      "title": "Gỡ bỏ code cloud provider in-tree",
+      "category": "api-extensibility",
+      "summary": "Toàn bộ tích hợp cloud provider viết thẳng trong lõi Kubernetes bị gỡ; mỗi cloud giờ chạy cloud-controller-manager riêng bên ngoài.",
+      "why_it_matters": "Kết thúc một quá trình dọn dẹp kéo dài nhiều năm — lõi Kubernetes không còn phải release lại chỉ vì một cloud provider đổi API.",
+      "breaking_change": true,
+      "is_milestone": true,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.31.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "ocirepo-volume-alpha",
+      "title": "Mount OCI image làm volume (alpha)",
+      "category": "storage",
+      "summary": "Pod có thể mount trực tiếp nội dung của một OCI image dưới dạng volume chỉ đọc, thay vì phải copy qua init container.",
+      "why_it_matters": "Model AI, tập dữ liệu và file cấu hình lớn có thể được phân phối bằng chính registry sẵn có thay vì dựng thêm hạ tầng chia sẻ file.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.31.md",
+      "reviewed_by_human": false
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "kube-proxy-iptables-to-nftables",
+  "title": "kube-proxy: iptables → nftables",
+  "category": "networking",
+  "description": "Backend iptables của kube-proxy không theo kịp cluster có hàng nghìn Service, nên một backend nftables được xây song song để thay thế.",
+  "milestones": [
+    {
+      "version": "1.29",
+      "stage": "alpha",
+      "narrative": "Chế độ nftables ra mắt alpha, nhắm thẳng vào chi phí cập nhật luật tuyến tính của iptables.",
+      "change_id": "nftables-proxy-alpha"
+    },
+    {
+      "version": "1.31",
+      "stage": "solution",
+      "narrative": "Lên beta, đủ ổn định để cluster lớn thử nghiệm bằng proxy-mode=nftables.",
+      "change_id": "nftables-proxy-beta"
+    }
+  ]
+}

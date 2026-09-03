@@ -1,0 +1,66 @@
+{
+  "version": "1.21",
+  "release_date": "2021-04-08",
+  "changes": [
+    {
+      "id": "psp-deprecated",
+      "title": "PodSecurityPolicy bị deprecated",
+      "category": "security",
+      "summary": "PodSecurityPolicy được đánh dấu deprecated và sẽ bị gỡ ở bản 1.25. Cơ chế thay thế sẽ là một admission controller mới, đơn giản hơn.",
+      "why_it_matters": "PSP nổi tiếng khó dùng đúng: thứ tự chọn policy khó đoán và một cấu hình sai sẽ chặn toàn bộ workload — cộng đồng chọn thiết kế lại thay vì vá tiếp.",
+      "breaking_change": true,
+      "is_milestone": false,
+      "feature_journey_id": "psp-to-pod-security-admission",
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.21.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "cronjob-ga",
+      "title": "CronJob đạt GA (batch/v1)",
+      "category": "scheduling",
+      "summary": "CronJob lên batch/v1 cùng với một controller mới viết lại, xử lý job định kỳ chính xác và nhẹ hơn bản cũ.",
+      "why_it_matters": "CronJob đã được dùng rộng rãi trong production nhiều năm dù mới ở beta — GA đưa thực tế và cam kết API về đúng với nhau.",
+      "breaking_change": false,
+      "is_milestone": true,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.21.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "dual-stack-beta",
+      "title": "IPv4/IPv6 dual-stack lên beta và bật mặc định",
+      "category": "networking",
+      "summary": "Pod và Service có thể nhận đồng thời địa chỉ IPv4 và IPv6. Service có thêm trường ipFamilyPolicy để chọn chế độ single-stack hay dual-stack.",
+      "why_it_matters": "Nhiều môi trường doanh nghiệp và telco đã cạn không gian địa chỉ IPv4 — dual-stack là điều kiện cần để chạy Kubernetes ở đó.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.21.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "immutable-secrets-ga",
+      "title": "Secret và ConfigMap bất biến đạt GA",
+      "category": "security",
+      "summary": "Đặt immutable: true trên một Secret hoặc ConfigMap để khoá nội dung không cho sửa nữa; muốn đổi thì phải tạo object mới.",
+      "why_it_matters": "Ngoài việc chặn sửa nhầm, object bất biến còn giúp kubelet ngừng watch chúng, giảm đáng kể tải lên apiserver ở cluster lớn.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.21.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "topology-aware-hints",
+      "title": "Topology Aware Hints cho định tuyến Service",
+      "category": "networking",
+      "summary": "EndpointSlice mang thêm gợi ý về vùng (zone) để kube-proxy ưu tiên gửi traffic tới endpoint cùng zone với client.",
+      "why_it_matters": "Traffic đi xuyên zone vừa chậm hơn vừa bị tính phí ở phần lớn cloud provider — giữ traffic trong zone cắt được cả độ trễ lẫn hoá đơn.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": "endpoints-to-endpointslice",
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.21.md",
+      "reviewed_by_human": false
+    }
+  ]
+}

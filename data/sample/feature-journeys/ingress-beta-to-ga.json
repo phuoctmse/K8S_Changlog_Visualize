@@ -1,0 +1,20 @@
+{
+  "id": "ingress-beta-to-ga",
+  "title": "Ingress: từ beta tới GA",
+  "category": "networking",
+  "description": "Ingress mất nhiều năm để rời khỏi extensions/v1beta1, đi qua một lần đổi API group rồi mới siết schema và lên GA.",
+  "milestones": [
+    {
+      "version": "1.16",
+      "stage": "problem",
+      "narrative": "Ingress rời extensions/v1beta1 sang networking.k8s.io/v1beta1 — bước dọn nhà đầu tiên trước khi có thể ổn định API.",
+      "change_id": "ingress-networking-v1beta1"
+    },
+    {
+      "version": "1.19",
+      "stage": "ga",
+      "narrative": "Ingress lên networking.k8s.io/v1 với pathType bắt buộc và cấu trúc backend rõ ràng hơn.",
+      "change_id": "ingress-ga"
+    }
+  ]
+}

@@ -2,3 +2,8 @@
 node_modules/
 .env
 data/raw/
+
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo

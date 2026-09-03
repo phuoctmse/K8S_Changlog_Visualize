@@ -1,0 +1,54 @@
+{
+  "version": "1.28",
+  "release_date": "2023-08-15",
+  "changes": [
+    {
+      "id": "sidecar-containers-alpha",
+      "title": "Sidecar container ra mắt bản alpha",
+      "category": "container-runtime",
+      "summary": "Init container có thể khai báo restartPolicy: Always để trở thành sidecar — chạy song song với container chính và có vòng đời do kubelet quản lý.",
+      "why_it_matters": "Trước đó sidecar chỉ là quy ước: container phụ không chịu dừng khiến Job không bao giờ kết thúc, còn proxy khởi động chậm khiến container chính lỗi lúc start.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": "sidecar-containers",
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.28.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "skew-policy-three-versions",
+      "title": "Nới version skew giữa control plane và node lên 3 version",
+      "category": "api-extensibility",
+      "summary": "kubelet được phép chạy chậm hơn kube-apiserver tối đa 3 minor version thay vì 2.",
+      "why_it_matters": "Cluster lớn có thể nâng control plane trước và giãn việc nâng node ra nhiều tháng, thay vì phải chạy đua theo mỗi release.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.28.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "job-backoff-per-index",
+      "title": "Job hỗ trợ backoff theo từng index",
+      "category": "scheduling",
+      "summary": "Với Indexed Job, mỗi index được tính số lần retry riêng thay vì dùng chung một hạn mức backoffLimit cho cả Job.",
+      "why_it_matters": "Một index lỗi liên tục không còn kéo cả Job hàng nghìn index vào trạng thái thất bại.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.28.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "node-non-graceful-shutdown-ga",
+      "title": "Xử lý node tắt đột ngột đạt GA",
+      "category": "scheduling",
+      "summary": "Khi node tắt mà không kịp báo, admin gắn taint out-of-service để Kubernetes lập tức detach volume và tạo lại pod ở node khác.",
+      "why_it_matters": "Không có cơ chế này, StatefulSet có thể treo vô hạn vì volume vẫn bị coi là đang gắn vào một node đã chết.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.28.md",
+      "reviewed_by_human": false
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "reviewed_by_human": false,
+  "note": "Bản đồ khái niệm này được biên soạn thủ công dựa trên tài liệu chính thức của Kubernetes (kubernetes.io/docs/concepts). Nó KHÔNG phải output của pipeline LLM. Cần review trước khi publish — xem CLAUDE.md mục 5.",
+  "layers": [
+    {
+      "id": "control-plane",
+      "label": "Control plane",
+      "description": "Bộ não của cluster: nhận yêu cầu, lưu trạng thái mong muốn và liên tục đưa thực tế về đúng trạng thái đó.",
+      "concepts": [
+        { "id": "kube-apiserver", "label": "kube-apiserver", "category": "api-extensibility", "description": "Cửa ngõ duy nhất vào cluster. Mọi thao tác đọc/ghi đều đi qua đây, kèm authentication, authorization và admission." },
+        { "id": "etcd", "label": "etcd", "category": "api-extensibility", "description": "Kho lưu trữ key-value nhất quán, giữ toàn bộ trạng thái cluster. Mất etcd là mất cluster." },
+        { "id": "kube-scheduler", "label": "kube-scheduler", "category": "scheduling", "description": "Chọn node phù hợp cho từng pod chưa được xếp lịch, dựa trên tài nguyên, ràng buộc và affinity." },
+        { "id": "controller-manager", "label": "controller-manager", "category": "api-extensibility", "description": "Tập hợp các control loop: mỗi loop so sánh trạng thái thực tế với spec và hành động để thu hẹp khoảng cách." }
+      ]
+    },
+    {
+      "id": "node",
+      "label": "Node",
+      "description": "Máy chạy workload thật. Nhận lệnh từ control plane và biến chúng thành container đang chạy.",
+      "concepts": [
+        { "id": "kubelet", "label": "kubelet", "category": "container-runtime", "description": "Agent trên mỗi node: đảm bảo các container mô tả trong PodSpec đang chạy và khoẻ mạnh." },
+        { "id": "kube-proxy", "label": "kube-proxy", "category": "networking", "description": "Dựng luật định tuyến trên node để traffic tới ClusterIP của Service được chuyển tới đúng pod." },
+        { "id": "cri", "label": "Container runtime (CRI)", "category": "container-runtime", "description": "Phần mềm thực sự chạy container (containerd, CRI-O), giao tiếp với kubelet qua chuẩn CRI." }
+      ]
+    },
+    {
+      "id": "workload",
+      "label": "Workload",
+      "description": "Các cách khai báo 'chạy cái gì' — từ một pod đơn lẻ tới job chạy theo lịch.",
+      "concepts": [
+        { "id": "pod", "label": "Pod", "category": "container-runtime", "description": "Đơn vị triển khai nhỏ nhất: một hoặc nhiều container chia sẻ network namespace và volume." },
+        { "id": "deployment", "label": "Deployment", "category": "scheduling", "description": "Quản lý ReplicaSet để rollout và rollback các phiên bản stateless một cách có kiểm soát." },
+        { "id": "statefulset", "label": "StatefulSet", "category": "storage", "description": "Dành cho workload có state: pod có định danh ổn định và volume riêng đi theo từng pod." },
+        { "id": "daemonset", "label": "DaemonSet", "category": "scheduling", "description": "Đảm bảo mỗi node (hoặc tập node được chọn) chạy đúng một bản sao của pod — thường là agent log hoặc metric." },
+        { "id": "job-cronjob", "label": "Job / CronJob", "category": "scheduling", "description": "Chạy tác vụ tới khi hoàn thành, một lần hoặc theo lịch định kỳ." }
+      ]
+    },
+    {
+      "id": "networking",
+      "label": "Networking",
+      "description": "Cách các pod tìm thấy nhau và cách traffic từ ngoài đi vào cluster.",
+      "concepts": [
+        { "id": "service", "label": "Service", "category": "networking", "description": "Một địa chỉ ổn định đứng trước một tập pod luôn thay đổi, kèm load balancing cơ bản." },
+        { "id": "endpointslice", "label": "EndpointSlice", "category": "networking", "description": "Danh sách endpoint thật sự đứng sau một Service, chia nhỏ thành nhiều object để scale tốt hơn." },
+        { "id": "ingress", "label": "Ingress", "category": "networking", "description": "Định tuyến HTTP/HTTPS từ bên ngoài vào các Service theo host và path." },
+        { "id": "networkpolicy", "label": "NetworkPolicy", "category": "security", "description": "Tường lửa ở tầng pod: khai báo pod nào được phép nói chuyện với pod nào." },
+        { "id": "coredns", "label": "DNS trong cluster", "category": "networking", "description": "Phân giải tên Service thành ClusterIP, giúp workload gọi nhau bằng tên thay vì IP." }
+      ]
+    },
+    {
+      "id": "storage",
+      "label": "Storage",
+      "description": "Cách dữ liệu sống lâu hơn vòng đời của một container.",
+      "concepts": [
+        { "id": "volume", "label": "Volume", "category": "storage", "description": "Thư mục được mount vào container, vòng đời gắn với pod chứ không phải container." },
+        { "id": "pv-pvc", "label": "PersistentVolume / PVC", "category": "storage", "description": "Tách bạch giữa 'ứng dụng cần bao nhiêu dung lượng' (PVC) và 'đĩa thật nằm ở đâu' (PV)." },
+        { "id": "storageclass", "label": "StorageClass", "category": "storage", "description": "Mô tả một 'loại' storage để PV được cấp phát tự động khi có PVC yêu cầu." },
+        { "id": "csi", "label": "CSI", "category": "storage", "description": "Chuẩn giao tiếp giữa Kubernetes và hệ thống lưu trữ, thay cho code driver viết thẳng trong lõi." }
+      ]
+    },
+    {
+      "id": "security",
+      "label": "Security & Policy",
+      "description": "Ai được làm gì, và workload được chạy với quyền tới đâu.",
+      "concepts": [
+        { "id": "serviceaccount", "label": "ServiceAccount", "category": "security", "description": "Danh tính của workload khi gọi vào kube-apiserver." },
+        { "id": "rbac", "label": "RBAC", "category": "security", "description": "Gán quyền theo vai trò: Role/ClusterRole định nghĩa quyền, RoleBinding gắn quyền cho chủ thể." },
+        { "id": "pod-security-admission", "label": "Pod Security Admission", "category": "security", "description": "Áp ba mức policy privileged / baseline / restricted lên pod, bật bằng label trên namespace." },
+        { "id": "secret", "label": "Secret", "category": "security", "description": "Lưu dữ liệu nhạy cảm tách khỏi image và manifest, có thể mã hoá at-rest trong etcd." },
+        { "id": "securitycontext", "label": "SecurityContext", "category": "security", "description": "Đặt quyền ở mức pod/container: chạy với user nào, seccomp và AppArmor profile ra sao." }
+      ]
+    },
+    {
+      "id": "extensibility",
+      "label": "API & Extensibility",
+      "description": "Cách thêm khái niệm mới vào Kubernetes mà không phải sửa lõi.",
+      "concepts": [
+        { "id": "crd", "label": "CustomResourceDefinition", "category": "api-extensibility", "description": "Khai báo một kind mới để kube-apiserver phục vụ nó như tài nguyên gốc." },
+        { "id": "operator", "label": "Operator", "category": "api-extensibility", "description": "Controller chạy vòng lặp điều khiển cho một CRD, đóng gói kiến thức vận hành của một hệ thống cụ thể." },
+        { "id": "admission-webhook", "label": "Admission webhook", "category": "api-extensibility", "description": "Chặn request trước khi ghi vào etcd để validate hoặc chỉnh sửa (mutate) object." },
+        { "id": "api-aggregation", "label": "API Aggregation", "category": "api-extensibility", "description": "Gắn một apiserver riêng vào sau kube-apiserver để phục vụ API group của bạn." }
+      ]
+    }
+  ]
+}

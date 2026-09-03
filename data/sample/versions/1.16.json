@@ -1,0 +1,66 @@
+{
+  "version": "1.16",
+  "release_date": "2019-09-18",
+  "changes": [
+    {
+      "id": "crd-ga",
+      "title": "CustomResourceDefinition đạt GA (apiextensions.k8s.io/v1)",
+      "category": "api-extensibility",
+      "summary": "CRD chính thức lên GA với API group apiextensions.k8s.io/v1. Bản GA bắt buộc phải khai báo structural schema và bật validation cho mọi custom resource, thay vì cho phép schema tuỳ ý như thời v1beta1.",
+      "why_it_matters": "Đây là nền móng để toàn bộ hệ sinh thái Operator có thể xây trên một API ổn định — từ đây mở rộng Kubernetes không còn là tính năng thử nghiệm.",
+      "breaking_change": false,
+      "is_milestone": true,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.16.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "ingress-networking-v1beta1",
+      "title": "Ingress chuyển sang API group networking.k8s.io",
+      "category": "networking",
+      "summary": "Ingress được chuyển từ extensions/v1beta1 sang networking.k8s.io/v1beta1. Bản cũ vẫn dùng được nhưng đã bị đánh dấu deprecated và sẽ bị gỡ ở các version sau.",
+      "why_it_matters": "Đây là bước đầu của lộ trình đưa Ingress lên GA — manifest cũ cần đổi apiVersion nếu không muốn hỏng khi nâng cấp.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": "ingress-beta-to-ga",
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.16.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "extensions-v1beta1-removed",
+      "title": "Gỡ bỏ extensions/v1beta1 cho Deployment, DaemonSet, StatefulSet",
+      "category": "api-extensibility",
+      "summary": "Các API version cũ extensions/v1beta1 và apps/v1beta1, apps/v1beta2 bị gỡ hoàn toàn cho Deployment, DaemonSet, ReplicaSet và StatefulSet. Tất cả phải dùng apps/v1.",
+      "why_it_matters": "Đây là breaking change lớn nhất của 1.16 — cluster nâng cấp mà chưa migrate manifest sẽ bị từ chối apply.",
+      "breaking_change": true,
+      "is_milestone": false,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.16.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "endpointslice-alpha",
+      "title": "EndpointSlice ra mắt bản alpha",
+      "category": "networking",
+      "summary": "EndpointSlice là cách biểu diễn mới cho danh sách endpoint của Service, chia nhỏ thành nhiều object thay vì dồn tất cả vào một Endpoints object duy nhất.",
+      "why_it_matters": "Với Service có hàng nghìn pod, object Endpoints đơn lẻ trở thành nút thắt cổ chai cho etcd và kube-proxy; EndpointSlice sinh ra để gỡ đúng nút thắt đó.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": "endpoints-to-endpointslice",
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.16.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "volume-resize-beta",
+      "title": "Mở rộng dung lượng PersistentVolume lên beta",
+      "category": "storage",
+      "summary": "Cho phép tăng dung lượng của một PersistentVolumeClaim đang được pod sử dụng mà không cần tạo lại volume, với các CSI driver có hỗ trợ.",
+      "why_it_matters": "Trước đó muốn tăng disk phải tạo volume mới rồi copy dữ liệu — một thao tác thủ công và rủi ro.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.16.md",
+      "reviewed_by_human": false
+    }
+  ]
+}

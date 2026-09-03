@@ -1,0 +1,26 @@
+{
+  "id": "sidecar-containers",
+  "title": "Sidecar container: từ quy ước thành API",
+  "category": "container-runtime",
+  "description": "Mẫu sidecar được dùng rộng rãi nhiều năm trước khi Kubernetes có khái niệm chính thức cho nó — hành trình này biến một quy ước thành vòng đời do kubelet quản lý.",
+  "milestones": [
+    {
+      "version": "1.28",
+      "stage": "alpha",
+      "narrative": "Init container với restartPolicy: Always trở thành sidecar thật, gỡ đúng hai điểm đau: Job không kết thúc và proxy khởi động chậm.",
+      "change_id": "sidecar-containers-alpha"
+    },
+    {
+      "version": "1.29",
+      "stage": "solution",
+      "narrative": "Lên beta và bật mặc định: kubelet đảm bảo sidecar start trước và dừng sau container chính.",
+      "change_id": "sidecar-containers-beta"
+    },
+    {
+      "version": "1.33",
+      "stage": "ga",
+      "narrative": "Đạt GA — sidecar chính thức là một khái niệm của Kubernetes chứ không còn là cách lách.",
+      "change_id": "sidecar-containers-ga"
+    }
+  ]
+}

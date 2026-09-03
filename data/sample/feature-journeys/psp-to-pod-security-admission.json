@@ -1,0 +1,26 @@
+{
+  "id": "psp-to-pod-security-admission",
+  "title": "PodSecurityPolicy → Pod Security Admission",
+  "category": "security",
+  "description": "Kubernetes bỏ hẳn PodSecurityPolicy vì mô hình chọn policy của nó quá khó đoán, và thay bằng một admission controller cấu hình chỉ bằng label trên namespace.",
+  "milestones": [
+    {
+      "version": "1.21",
+      "stage": "problem",
+      "narrative": "PSP bị đánh dấu deprecated: thứ tự chọn policy khó đoán và một cấu hình sai có thể chặn toàn bộ workload.",
+      "change_id": "psp-deprecated"
+    },
+    {
+      "version": "1.25",
+      "stage": "solution",
+      "narrative": "Pod Security Admission lên GA với ba mức privileged / baseline / restricted, bật bằng label trên namespace.",
+      "change_id": "pod-security-admission-ga"
+    },
+    {
+      "version": "1.25",
+      "stage": "deprecated",
+      "narrative": "PSP bị gỡ hoàn toàn — cluster chưa migrate sẽ mất lớp kiểm soát này mà không có cảnh báo lúc runtime.",
+      "change_id": "psp-removed"
+    }
+  ]
+}

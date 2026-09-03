@@ -1,0 +1,66 @@
+{
+  "version": "1.19",
+  "release_date": "2020-08-26",
+  "changes": [
+    {
+      "id": "ingress-ga",
+      "title": "Ingress đạt GA (networking.k8s.io/v1)",
+      "category": "networking",
+      "summary": "Sau nhiều năm ở trạng thái beta, Ingress chính thức lên networking.k8s.io/v1. Bản GA siết lại schema: pathType trở thành trường bắt buộc và cấu trúc backend được viết lại rõ ràng hơn.",
+      "why_it_matters": "Ingress là cách phổ biến nhất để expose HTTP ra ngoài cluster — GA nghĩa là API này được cam kết ổn định lâu dài.",
+      "breaking_change": false,
+      "is_milestone": true,
+      "feature_journey_id": "ingress-beta-to-ga",
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.19.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "seccomp-ga",
+      "title": "Seccomp đạt GA",
+      "category": "security",
+      "summary": "Cấu hình seccomp chuyển từ annotation sang trường chính thức securityContext.seccompProfile trên Pod và Container.",
+      "why_it_matters": "Seccomp giới hạn các syscall mà container được phép gọi — đưa nó thành field chuẩn giúp policy bảo mật được validate thay vì lệ thuộc vào annotation dễ gõ sai.",
+      "breaking_change": false,
+      "is_milestone": true,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.19.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "structured-logging-alpha",
+      "title": "Structured logging cho component control plane",
+      "category": "observability",
+      "summary": "Log của kube-apiserver, kube-scheduler và các component khác bắt đầu chuyển sang định dạng có cấu trúc, cho phép xuất ra JSON thay vì chuỗi text tự do.",
+      "why_it_matters": "Log dạng text tự do rất khó parse để đưa vào hệ thống tập trung — structured logging giúp truy vấn và alert đáng tin cậy hơn.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.19.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "support-window-one-year",
+      "title": "Kéo dài vòng đời hỗ trợ mỗi bản lên 1 năm",
+      "category": "api-extensibility",
+      "summary": "Mỗi minor version được hỗ trợ vá lỗi trong 1 năm thay vì 9 tháng như trước.",
+      "why_it_matters": "Chu kỳ nâng cấp cluster production giãn ra, giảm áp lực phải chạy theo release mới liên tục.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.19.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "endpointslice-beta-default",
+      "title": "EndpointSlice được kube-proxy dùng mặc định",
+      "category": "networking",
+      "summary": "kube-proxy chuyển sang đọc EndpointSlice thay vì Endpoints để dựng bảng định tuyến trên mỗi node.",
+      "why_it_matters": "Đây là bước biến EndpointSlice từ một API song song thành đường dữ liệu chính, cải thiện rõ khả năng scale của Service lớn.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": "endpoints-to-endpointslice",
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.19.md",
+      "reviewed_by_human": false
+    }
+  ]
+}

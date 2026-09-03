@@ -1,0 +1,32 @@
+{
+  "id": "endpoints-to-endpointslice",
+  "title": "Endpoints → EndpointSlice",
+  "category": "networking",
+  "description": "Danh sách endpoint của Service được chia nhỏ thành nhiều object để Service quy mô lớn không còn làm nghẽn etcd và kube-proxy.",
+  "milestones": [
+    {
+      "version": "1.16",
+      "stage": "alpha",
+      "narrative": "EndpointSlice ra mắt alpha: thay vì một Endpoints object khổng lồ, endpoint được chia thành nhiều slice nhỏ.",
+      "change_id": "endpointslice-alpha"
+    },
+    {
+      "version": "1.19",
+      "stage": "solution",
+      "narrative": "kube-proxy chuyển sang đọc EndpointSlice, biến nó thành đường dữ liệu chính chứ không còn là API song song.",
+      "change_id": "endpointslice-beta-default"
+    },
+    {
+      "version": "1.21",
+      "stage": "solution",
+      "narrative": "Topology Aware Hints tận dụng cấu trúc slice để giữ traffic trong cùng zone, cắt cả độ trễ lẫn chi phí.",
+      "change_id": "topology-aware-hints"
+    },
+    {
+      "version": "1.33",
+      "stage": "deprecated",
+      "narrative": "API Endpoints cũ bị deprecated — EndpointSlice trở thành cách duy nhất được khuyến nghị.",
+      "change_id": "endpoints-api-deprecated"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "version": "1.29",
+  "release_date": "2023-12-13",
+  "changes": [
+    {
+      "id": "sidecar-containers-beta",
+      "title": "Sidecar container lên beta và bật mặc định",
+      "category": "container-runtime",
+      "summary": "Tính năng sidecar được bật mặc định. kubelet đảm bảo sidecar khởi động trước container chính và chỉ dừng sau khi container chính kết thúc.",
+      "why_it_matters": "Đây là mốc biến sidecar từ tính năng phải tự bật thành hành vi mặc định — service mesh và agent thu log dựa hết vào thứ tự vòng đời này.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": "sidecar-containers",
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.29.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "nftables-proxy-alpha",
+      "title": "kube-proxy có chế độ nftables (alpha)",
+      "category": "networking",
+      "summary": "kube-proxy thêm một backend mới dùng nftables thay cho iptables để dựng luật định tuyến Service trên node.",
+      "why_it_matters": "Với vài nghìn Service, iptables cập nhật luật theo thời gian tuyến tính và trở thành điểm nghẽn thật sự; nftables xử lý cùng tập luật nhanh hơn nhiều bậc.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": "kube-proxy-iptables-to-nftables",
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.29.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "kms-v2-ga",
+      "title": "KMS v2 để mã hoá dữ liệu at-rest đạt GA",
+      "category": "security",
+      "summary": "Giao thức KMS v2 lên GA, hỗ trợ xoay khoá mà không phải đọc-ghi lại toàn bộ secret trong etcd.",
+      "why_it_matters": "Xoay khoá mã hoá vốn là một thao tác nặng và rủi ro; KMS v2 biến nó thành việc có thể làm định kỳ.",
+      "breaking_change": false,
+      "is_milestone": true,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.29.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "readwriteoncepod-ga",
+      "title": "Access mode ReadWriteOncePod đạt GA",
+      "category": "storage",
+      "summary": "Chế độ truy cập volume giới hạn cho đúng một pod duy nhất được mount, chặt hơn ReadWriteOnce vốn chỉ giới hạn theo node.",
+      "why_it_matters": "Database chạy trên Kubernetes cần đảm bảo tuyệt đối chỉ một tiến trình ghi vào volume — ReadWriteOnce cũ không đủ để cam kết điều đó.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.29.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "legacy-secret-token-removed",
+      "title": "Ngừng tự sinh Secret token cho ServiceAccount",
+      "category": "security",
+      "summary": "Kubernetes không còn tự tạo Secret chứa token vĩnh viễn cho mỗi ServiceAccount; token giờ được cấp theo phiên và có hạn.",
+      "why_it_matters": "Token vĩnh viễn nằm sẵn trong etcd là mục tiêu tấn công rõ ràng — token có hạn thu hẹp thiệt hại khi bị lộ.",
+      "breaking_change": true,
+      "is_milestone": false,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.29.md",
+      "reviewed_by_human": false
+    }
+  ]
+}

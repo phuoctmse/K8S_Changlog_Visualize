@@ -1,0 +1,66 @@
+{
+  "version": "1.25",
+  "release_date": "2022-08-23",
+  "changes": [
+    {
+      "id": "psp-removed",
+      "title": "PodSecurityPolicy bị gỡ bỏ hoàn toàn",
+      "category": "security",
+      "summary": "API PodSecurityPolicy không còn tồn tại trong 1.25. Mọi PSP object và RBAC gắn với nó ngừng có tác dụng sau khi nâng cấp.",
+      "why_it_matters": "Cluster còn phụ thuộc PSP mà nâng lên 1.25 sẽ mất toàn bộ lớp kiểm soát bảo mật đó trong im lặng — bắt buộc phải migrate trước.",
+      "breaking_change": true,
+      "is_milestone": true,
+      "feature_journey_id": "psp-to-pod-security-admission",
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.25.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "pod-security-admission-ga",
+      "title": "Pod Security Admission đạt GA",
+      "category": "security",
+      "summary": "Admission controller tích hợp sẵn áp ba mức policy định nghĩa trước — privileged, baseline, restricted — bật bằng label trên namespace.",
+      "why_it_matters": "Thay cho mô hình PSP khó đoán, giờ chỉ cần gắn một label lên namespace là biết chính xác policy nào đang áp.",
+      "breaking_change": false,
+      "is_milestone": true,
+      "feature_journey_id": "psp-to-pod-security-admission",
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.25.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "ephemeral-containers-ga",
+      "title": "Ephemeral container đạt GA",
+      "category": "container-runtime",
+      "summary": "kubectl debug có thể gắn thêm một container tạm vào pod đang chạy để chẩn đoán, mà không phải restart hay sửa pod spec.",
+      "why_it_matters": "Image production thường được xây tối giản, không có cả shell — ephemeral container là cách debug chúng mà không phá vỡ nguyên tắc image gọn.",
+      "breaking_change": false,
+      "is_milestone": true,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.25.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "cgroup-v2-ga",
+      "title": "Hỗ trợ cgroup v2 đạt GA",
+      "category": "container-runtime",
+      "summary": "kubelet hỗ trợ chính thức cgroup v2, bao gồm quản lý bộ nhớ theo cơ chế mới của kernel.",
+      "why_it_matters": "cgroup v2 kiểm soát bộ nhớ chính xác hơn nhiều so với v1, giảm các tình huống pod bị OOM kill khó giải thích.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.25.md",
+      "reviewed_by_human": false
+    },
+    {
+      "id": "csi-migration-gce-aws",
+      "title": "CSI migration cho GCE PD và AWS EBS lên GA",
+      "category": "storage",
+      "summary": "Các volume plugin in-tree của GCE Persistent Disk và AWS EBS tự động chuyển hướng sang CSI driver tương ứng, không cần sửa manifest.",
+      "why_it_matters": "Đây là bước dọn dẹp để gỡ code của từng cloud provider ra khỏi lõi Kubernetes, đưa storage về một giao diện chuẩn duy nhất.",
+      "breaking_change": false,
+      "is_milestone": false,
+      "feature_journey_id": null,
+      "source_url": "https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.25.md",
+      "reviewed_by_human": false
+    }
+  ]
+}

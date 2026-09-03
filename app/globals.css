@@ -1,0 +1,220 @@
+@import 'tailwindcss';
+
+/* Theme thủ công (nút chuyển sáng/tối) thay vì chỉ dựa vào prefers-color-scheme. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans:
+    'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+    'Noto Sans', 'Liberation Sans', Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+/* ---------- tokens ---------- */
+:root {
+  color-scheme: light;
+  --bg: #f6f7fb;
+  --bg-grad-a: #eef2ff;
+  --bg-grad-b: #f6f7fb;
+  --surface: #ffffff;
+  --surface-2: #f1f3f9;
+  --border: #e2e6f0;
+  --border-strong: #cfd6e6;
+  --text: #10131c;
+  --muted: #5b6478;
+  --faint: #8a93a8;
+  --accent: #326ce5;
+  --accent-soft: #326ce514;
+  --shadow: 0 1px 2px rgb(16 19 28 / 0.04), 0 8px 24px -12px rgb(16 19 28 / 0.16);
+  --shadow-lg: 0 2px 4px rgb(16 19 28 / 0.04), 0 24px 48px -24px rgb(16 19 28 / 0.28);
+
+  --cat-networking: #2f6fe4;
+  --cat-security: #d6336c;
+  --cat-storage: #0f9b8e;
+  --cat-scheduling: #7c4dde;
+  --cat-container-runtime: #e0603a;
+  --cat-observability: #b7791f;
+  --cat-api-extensibility: #2f9e57;
+
+  --danger: #d6336c;
+  --milestone: #b7791f;
+}
+
+.dark {
+  color-scheme: dark;
+  --bg: #0b0e17;
+  --bg-grad-a: #121a2e;
+  --bg-grad-b: #0b0e17;
+  --surface: #141926;
+  --surface-2: #1b2131;
+  --border: #262d40;
+  --border-strong: #36405a;
+  --text: #eef1f7;
+  --muted: #9aa4bb;
+  --faint: #6c7793;
+  --accent: #6f9bff;
+  --accent-soft: #6f9bff1f;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.6);
+  --shadow-lg: 0 2px 4px rgb(0 0 0 / 0.3), 0 24px 48px -24px rgb(0 0 0 / 0.8);
+
+  --cat-networking: #74a3ff;
+  --cat-security: #ff7ba8;
+  --cat-storage: #3fd3c2;
+  --cat-scheduling: #b39bff;
+  --cat-container-runtime: #ff9772;
+  --cat-observability: #f0c25a;
+  --cat-api-extensibility: #5fd88c;
+
+  --danger: #ff7ba8;
+  --milestone: #f0c25a;
+}
+
+/* ---------- base ---------- */
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(1200px 620px at 50% -10%, var(--bg-grad-a), transparent 70%),
+    var(--bg-grad-b);
+  background-attachment: fixed;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- màu theo category ---------- */
+/* Component chỉ cần gắn data-cat="<category id>"; mọi thứ bên trong đọc var(--cat).
+   Fallback phải đứng TRƯỚC các rule cụ thể: mọi selector ở đây cùng specificity,
+   nên rule viết sau sẽ thắng — để [data-cat] ở cuối là ghi đè hết thành --accent. */
+[data-cat] { --cat: var(--accent); }
+[data-cat='networking'] { --cat: var(--cat-networking); }
+[data-cat='security'] { --cat: var(--cat-security); }
+[data-cat='storage'] { --cat: var(--cat-storage); }
+[data-cat='scheduling'] { --cat: var(--cat-scheduling); }
+[data-cat='container-runtime'] { --cat: var(--cat-container-runtime); }
+[data-cat='observability'] { --cat: var(--cat-observability); }
+[data-cat='api-extensibility'] { --cat: var(--cat-api-extensibility); }
+
+/* ---------- primitives ---------- */
+.surface {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.card-hover {
+  transition:
+    transform 0.18s cubic-bezier(0.2, 0.7, 0.3, 1),
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: color-mix(in srgb, var(--cat, var(--accent)) 45%, var(--border));
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 550;
+  line-height: 1.2;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.chip-cat {
+  color: var(--cat);
+  background: color-mix(in srgb, var(--cat) 12%, transparent);
+  border-color: color-mix(in srgb, var(--cat) 26%, transparent);
+}
+
+.chip-neutral {
+  color: var(--muted);
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+.chip-button {
+  cursor: pointer;
+  user-select: none;
+}
+.chip-button:hover {
+  background: color-mix(in srgb, var(--cat, var(--accent)) 18%, transparent);
+}
+.chip-button[aria-pressed='true'] {
+  color: color-mix(in srgb, var(--cat, var(--accent)) 80%, var(--text));
+  background: color-mix(in srgb, var(--cat, var(--accent)) 20%, transparent);
+  border-color: color-mix(in srgb, var(--cat, var(--accent)) 55%, transparent);
+}
+
+.dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--cat, var(--accent));
+  flex: none;
+}
+
+.accent-bar {
+  background: linear-gradient(
+    180deg,
+    var(--cat, var(--accent)),
+    color-mix(in srgb, var(--cat, var(--accent)) 25%, transparent)
+  );
+}
+
+/* Ô heatmap của Overview map: đậm nhạt theo --level (0 -> 1). */
+.heat-cell {
+  background: color-mix(
+    in srgb,
+    var(--cat, var(--accent)) calc(var(--level, 0) * 82%),
+    var(--surface-2)
+  );
+  border: 1px solid var(--border);
+  transition: transform 0.14s ease, box-shadow 0.14s ease, outline-color 0.14s ease;
+}
+.heat-cell:hover {
+  transform: scale(1.14);
+  z-index: 5;
+  box-shadow: var(--shadow);
+}
+
+.link-underline {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  text-underline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
